@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuthApplication</title>
+  
+</head>
+
+<body>
+    <div>
+        <input type="text" placeholder="email" id="SignupTab">
+        <input type="text" placeholder="password" id="SignupTabPass">
+        <button onclick ="Signup()">
+            Signup
+        </button>
+    </div>
+
+    <div>
+        <input type="text" placeholder="email" id="SigninTab">
+        <input type="text" placeholder="password" id="SigninTabPass">
+        <button onclick ="Signin()">
+            Signin
+        </button>
+    </div>
+
+    <div>
+        <h2>Who Logged in</h2>
+        <p id="Userdata"></p>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <script>
+        async function Signup(){
+            let UsernameTosend = document.getElementById("SignupTab").value;
+            let PasswordTosend = document.getElementById("SignupTabPass").value;
+
+            await axios.post("/signup", {
+                username : UsernameTosend,
+                password : PasswordTosend
+            })
+
+            alert("user registered");
+        }
+
+
+        async function Signin(){
+            let UsernameTosend = document.getElementById("SigninTab").value;
+            let PasswordTosend = document.getElementById("SigninTabPass").value;
+
+            const res = await axios.post("/signin", {
+                username : UsernameTosend,
+                password : PasswordTosend
+            })
+
+            localStorage.setItem("token", res.data.token);
+            alert("user signed in");
+        }
+
+
+        async function getUserdata(){
+            const resp = await axios.get("/me" ,{
+                headers : {
+                    token : localStorage.getItem("token")
+                }
+            })
+
+            document.getElementById("Userdata").innerHTML = "username :" +   resp.data.username + "  Password : " + resp.data.password;
+        }
+        getUserdata();
+
+</script>
+</body>
+</html>
